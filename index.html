@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>유주의 수학 숙제 🌟</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --sky: #6EC6F5;
+  --mint: #4DD9AC;
+  --sun: #FFD93D;
+  --coral: #FF6B6B;
+  --lavender: #C9A8F5;
+  --bg: #EAF6FF;
+  --card: #fff;
+  --text: #2D3250;
+  --shadow: 0 8px 32px rgba(110,198,245,0.18);
+  --radius: 22px;
+  --radius-sm: 12px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nanum Gothic', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Floating bubbles background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(110,198,245,0.18) 0%, transparent 40%),
+    radial-gradient(circle at 85% 75%, rgba(77,217,172,0.15) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(255,217,61,0.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bubble {
+  position: fixed;
+  border-radius: 50%;
+  opacity: 0.13;
+  animation: floatBubble linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes floatBubble {
+  0% { transform: translateY(110vh) scale(0.8); opacity: 0; }
+  10% { opacity: 0.13; }
+  90% { opacity: 0.13; }
+  100% { transform: translateY(-10vh) scale(1.1); opacity: 0; }
+}
+
+/* ======= LAYOUT ======= */
+.wrapper {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 16px 14px 60px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ======= HEADER ======= */
+.header {
+  text-align: center;
+  padding: 28px 0 18px;
+}
+.header-emoji { font-size: 52px; display: block; animation: bounce 2s infinite; }
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.header h1 {
+  font-family: 'Jua', sans-serif;
+  font-size: clamp(26px, 6vw, 38px);
+  color: var(--text);
+  letter-spacing: -0.5px;
+  margin-top: 6px;
+}
+.header h1 span { color: var(--sky); }
+
+/* ======= CARD ======= */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px 22px;
+  margin-bottom: 16px;
+  border: 2px solid rgba(110,198,245,0.15);
+  animation: fadeUp 0.4s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-label {
+  font-family: 'Jua', sans-serif;
+  font-size: 15px;
+  color: #888;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.section-label::before {
+  content: '';
+  width: 4px; height: 18px;
+  background: linear-gradient(180deg, var(--sky), var(--mint));
+  border-radius: 2px;
+  display: inline-block;
+}
+
+/* ======= DATE INPUT ======= */
+.date-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 18px;
+  font-family: 'Nanum Gothic', sans-serif;
+  border: 2.5px solid rgba(110,198,245,0.4);
+  border-radius: var(--radius-sm);
+  background: #f7fbff;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.date-input:focus { border-color: var(--sky); box-shadow: 0 0 0 3px rgba(110,198,245,0.18); }
+
+/* ======= OPERATION BUTTONS ======= */
+.op-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.op-btn {
+  padding: 16px 8px;
+  border: 3px solid #e0e0e0;
+  border-radius: var(--radius-sm);
+  background: #fafafa;
+  font-family: 'Jua', sans-serif;
+  font-size: 17px;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: center;
+  line-height: 1.3;
+}
+.op-btn .op-icon { font-size: 26px; display: block; margin-bottom: 4px; }
+.op-btn:hover { border-color: var(--sky); color: var(--sky); background: #f0f9ff; transform: translateY(-2px); }
+.op-btn.selected {
+  border-color: transparent;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+.op-btn.selected.mul { background: linear-gradient(135deg, var(--sky), #3aa8e0); }
+.op-btn.selected.div { background: linear-gradient(135deg, var(--coral), #e04444); }
+.op-btn.selected.mix { background: linear-gradient(135deg, var(--lavender), #a070e0); }
+
+/* ======= DIGIT SELECTORS ======= */
+.digit-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 6px;
+}
+.digit-btn {
+  padding: 10px 4px;
+  border: 2.5px solid #e0e0e0;
+  border-radius: 10px;
+  background: #fafafa;
+  font-family: 'Jua', sans-serif;
+  font-size: 15px;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.digit-btn:hover { border-color: var(--mint); color: var(--mint); }
+.digit-btn.selected { background: linear-gradient(135deg, var(--mint), #2eb88f); border-color: transparent; color: #fff; box-shadow: 0 4px 12px rgba(77,217,172,0.3); }
+
+/* ======= NUM QUESTIONS ======= */
+.num-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.num-btn {
+  padding: 12px 4px;
+  border: 2.5px solid #e0e0e0;
+  border-radius: 10px;
+  background: #fafafa;
+  font-family: 'Jua', sans-serif;
+  font-size: 16px;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.num-btn:hover { border-color: var(--sun); color: #c8960a; }
+.num-btn.selected { background: linear-gradient(135deg, var(--sun), #e8b800); border-color: transparent; color: #5a3d00; box-shadow: 0 4px 12px rgba(255,217,61,0.35); }
+
+/* ======= START BUTTON ======= */
+.start-btn {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, #6EC6F5 0%, #4DD9AC 100%);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'Jua', sans-serif;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(110,198,245,0.35);
+  transition: all 0.18s;
+  letter-spacing: 1px;
+  margin-top: 8px;
+}
+.start-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(110,198,245,0.45); }
+.start-btn:active { transform: translateY(0); }
+
+/* ======= GAME SCREEN ======= */
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.progress-wrap {
+  flex: 1;
+  margin-right: 14px;
+}
+.progress-bar-bg {
+  width: 100%;
+  height: 12px;
+  background: #e8f0fe;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sky), var(--mint));
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+.progress-label {
+  font-family: 'Jua', sans-serif;
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 4px;
+}
+.timer-badge {
+  background: linear-gradient(135deg, var(--sun), #fbb700);
+  color: #5a3d00;
+  font-family: 'Jua', sans-serif;
+  font-size: 17px;
+  padding: 8px 14px;
+  border-radius: 50px;
+  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(255,217,61,0.3);
+}
+
+/* QUESTION NUMBER */
+.q-number {
+  font-family: 'Jua', sans-serif;
+  font-size: clamp(15px, 3.5vw, 19px);
+  color: var(--sky);
+  text-align: center;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+/* QUESTION TEXT */
+.q-text {
+  font-family: 'Jua', sans-serif;
+  font-size: clamp(42px, 11vw, 72px);
+  color: var(--text);
+  text-align: center;
+  padding: 28px 10px;
+  background: linear-gradient(135deg, #f0faff, #f5fff8);
+  border-radius: var(--radius);
+  border: 2.5px solid rgba(110,198,245,0.2);
+  margin-bottom: 18px;
+  letter-spacing: 2px;
+  line-height: 1.2;
+  word-break: break-all;
+}
+
+/* ANSWER INPUTS */
+.answer-area { display: flex; gap: 10px; flex-wrap: wrap; }
+.answer-input-wrap {
+  flex: 1;
+  min-width: 140px;
+}
+.answer-label {
+  font-family: 'Jua', sans-serif;
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 5px;
+  display: block;
+}
+.answer-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-family: 'Jua', sans-serif;
+  font-size: 26px;
+  text-align: center;
+  border: 3px solid rgba(110,198,245,0.35);
+  border-radius: var(--radius-sm);
+  background: #f7fbff;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -moz-appearance: textfield;
+}
+.answer-input::-webkit-outer-spin-button,
+.answer-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.answer-input:focus { border-color: var(--sky); box-shadow: 0 0 0 4px rgba(110,198,245,0.15); }
+
+/* SUBMIT BUTTON */
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--coral), #e84040);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'Jua', sans-serif;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(255,107,107,0.35);
+  transition: all 0.15s;
+  margin-top: 12px;
+  letter-spacing: 1px;
+}
+.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(255,107,107,0.45); }
+.submit-btn:active { transform: scale(0.98); }
+
+/* Flash feedback */
+.q-text.correct-flash { animation: correctFlash 0.35s ease; }
+.q-text.wrong-flash { animation: wrongFlash 0.35s ease; }
+@keyframes correctFlash {
+  0% { background: linear-gradient(135deg, #d4fce8, #c0fadc); }
+  100% { background: linear-gradient(135deg, #f0faff, #f5fff8); }
+}
+@keyframes wrongFlash {
+  0% { background: linear-gradient(135deg, #ffe0e0, #ffc8c8); }
+  100% { background: linear-gradient(135deg, #f0faff, #f5fff8); }
+}
+
+/* ======= RESULT SCREEN ======= */
+.score-banner {
+  background: linear-gradient(135deg, var(--sky) 0%, var(--mint) 100%);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 28px rgba(110,198,245,0.3);
+  animation: fadeUp 0.4s ease both;
+}
+.score-emoji { font-size: 52px; display: block; margin-bottom: 8px; }
+.score-main {
+  font-family: 'Jua', sans-serif;
+  font-size: clamp(40px, 12vw, 64px);
+  color: #fff;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+.score-sub {
+  font-family: 'Jua', sans-serif;
+  font-size: 16px;
+  color: rgba(255,255,255,0.85);
+  margin-top: 6px;
+}
+.score-badges {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.score-badge {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  border-radius: 50px;
+  padding: 6px 16px;
+  font-family: 'Jua', sans-serif;
+  font-size: 15px;
+  backdrop-filter: blur(4px);
+}
+
+/* Result table */
+.result-table-wrap { overflow-x: auto; border-radius: var(--radius-sm); }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 360px;
+}
+thead tr { background: linear-gradient(90deg, var(--sky), var(--mint)); }
+th {
+  color: #fff;
+  font-family: 'Jua', sans-serif;
+  font-size: 14px;
+  padding: 10px 8px;
+  text-align: center;
+  font-weight: normal;
+}
+td { padding: 9px 8px; text-align: center; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+tr:nth-child(even) td { background: #fafcff; }
+.tag-correct { background: linear-gradient(135deg, var(--mint), #2db88c); color: #fff; border-radius: 50px; padding: 3px 12px; font-family: 'Jua', sans-serif; font-size: 15px; }
+.tag-wrong { background: linear-gradient(135deg, var(--coral), #e04040); color: #fff; border-radius: 50px; padding: 3px 12px; font-family: 'Jua', sans-serif; font-size: 15px; }
+
+/* Action buttons */
+.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+.action-btn {
+  padding: 15px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Jua', sans-serif;
+  font-size: 17px;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+}
+.action-btn:hover { transform: translateY(-2px); }
+.btn-save { background: linear-gradient(135deg, var(--lavender), #a070e0); color: #fff; }
+.btn-replay { background: linear-gradient(135deg, var(--sun), #e8b800); color: #5a3d00; }
+.btn-save:hover { box-shadow: 0 8px 20px rgba(160,112,224,0.35); }
+.btn-replay:hover { box-shadow: 0 8px 20px rgba(255,217,61,0.35); }
+
+/* History */
+.history-toggle {
+  width: 100%;
+  padding: 14px;
+  background: #f5f8ff;
+  border: 2px solid rgba(110,198,245,0.25);
+  border-radius: var(--radius-sm);
+  font-family: 'Jua', sans-serif;
+  font-size: 17px;
+  color: var(--text);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.history-toggle:hover { background: #eaf4ff; border-color: var(--sky); }
+
+/* History table */
+.history-wrap { margin-top: 12px; animation: fadeUp 0.3s ease both; }
+.history-table { min-width: 300px; }
+.history-table th { background: linear-gradient(90deg, var(--lavender), #a070e0); }
+
+/* HIDDEN */
+.hidden { display: none !important; }
+
+/* ======= RESPONSIVE ======= */
+@media (max-width: 480px) {
+  .wrapper { padding: 10px 10px 60px; }
+  .card { padding: 18px 14px; }
+  .op-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .num-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .num-btn { font-size: 14px; padding: 10px 2px; }
+  .digit-grid { gap: 6px; }
+  .digit-btn { font-size: 13px; padding: 9px 2px; }
+  table { font-size: 13px; }
+  .action-grid { grid-template-columns: 1fr 1fr; }
+  .q-text { font-size: clamp(36px, 10vw, 56px); }
+}
+@media (max-width: 360px) {
+  .num-grid { grid-template-columns: repeat(3, 1fr); }
+  .op-btn .op-icon { font-size: 22px; }
+  .op-btn { font-size: 15px; padding: 13px 4px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Floating bubbles -->
+<div class="bubble" style="width:80px;height:80px;background:#6EC6F5;left:5%;animation-duration:14s;animation-delay:0s;"></div>
+<div class="bubble" style="width:50px;height:50px;background:#4DD9AC;left:80%;animation-duration:18s;animation-delay:3s;"></div>
+<div class="bubble" style="width:100px;height:100px;background:#FFD93D;left:55%;animation-duration:22s;animation-delay:6s;"></div>
+<div class="bubble" style="width:60px;height:60px;background:#C9A8F5;left:30%;animation-duration:16s;animation-delay:9s;"></div>
+<div class="bubble" style="width:40px;height:40px;background:#FF6B6B;left:70%;animation-duration:20s;animation-delay:2s;"></div>
+<div class="bubble" style="width:70px;height:70px;background:#6EC6F5;left:15%;animation-duration:25s;animation-delay:12s;"></div>
+
+<div class="wrapper">
+
+  <!-- ============ HEADER ============ -->
+  <div class="header">
+    <span class="header-emoji">✏️</span>
+    <h1>유주의 <span>수학숙제</span></h1>
+  </div>
+
+  <!-- ============ SETUP SCREEN ============ -->
+  <div id="setupScreen">
+
+    <!-- 날짜 -->
+    <div class="card" style="animation-delay:0.05s">
+      <div class="section-label">📅 날짜 선택</div>
+      <input type="date" class="date-input" id="gameDate">
+    </div>
+
+    <!-- 연산 선택 -->
+    <div class="card" style="animation-delay:0.1s">
+      <div class="section-label">🔢 연산 선택</div>
+      <div class="op-grid">
+        <button class="op-btn mul" data-op="×" onclick="selectOp(this)">
+          <span class="op-icon">✖️</span>곱셈
+        </button>
+        <button class="op-btn div" data-op="÷" onclick="selectOp(this)">
+          <span class="op-icon">➗</span>나눗셈
+        </button>
+        <button class="op-btn mix" data-op="mix" onclick="selectOp(this)">
+          <span class="op-icon">🔀</span>혼합
+        </button>
+      </div>
+    </div>
+
+    <!-- 곱셈 자리수 -->
+    <div class="card hidden" id="mulCard" style="animation-delay:0.15s">
+      <div class="section-label">✖️ 곱셈 자리수</div>
+      <p style="font-size:13px;color:#aaa;margin-bottom:8px;">피연산자 1</p>
+      <div class="digit-grid" id="mul1Group">
+        <button class="digit-btn" data-val="1" onclick="selectDigit('mul1Group',this)">1자리</button>
+        <button class="digit-btn" data-val="2" onclick="selectDigit('mul1Group',this)">2자리</button>
+        <button class="digit-btn" data-val="3" onclick="selectDigit('mul1Group',this)">3자리</button>
+        <button class="digit-btn" data-val="4" onclick="selectDigit('mul1Group',this)">4자리</button>
+      </div>
+      <p style="font-size:13px;color:#aaa;margin:10px 0 8px;">피연산자 2</p>
+      <div class="digit-grid" id="mul2Group">
+        <button class="digit-btn" data-val="1" onclick="selectDigit('mul2Group',this)">1자리</button>
+        <button class="digit-btn" data-val="2" onclick="selectDigit('mul2Group',this)">2자리</button>
+        <button class="digit-btn" data-val="3" onclick="selectDigit('mul2Group',this)">3자리</button>
+        <button class="digit-btn" data-val="4" onclick="selectDigit('mul2Group',this)">4자리</button>
+      </div>
+    </div>
+
+    <!-- 나눗셈 자리수 -->
+    <div class="card hidden" id="divCard" style="animation-delay:0.15s">
+      <div class="section-label">➗ 나눗셈 자리수</div>
+      <p style="font-size:13px;color:#aaa;margin-bottom:8px;">나눠지는 수 (피제수)</p>
+      <div class="digit-grid" id="divAGroup">
+        <button class="digit-btn" data-val="2" onclick="selectDigit('divAGroup',this)">2자리</button>
+        <button class="digit-btn" data-val="3" onclick="selectDigit('divAGroup',this)">3자리</button>
+        <button class="digit-btn" data-val="4" onclick="selectDigit('divAGroup',this)">4자리</button>
+        <button class="digit-btn" data-val="5" onclick="selectDigit('divAGroup',this)">5자리</button>
+      </div>
+      <p style="font-size:13px;color:#aaa;margin:10px 0 8px;">나누는 수 (제수)</p>
+      <div class="digit-grid" id="divBGroup">
+        <button class="digit-btn" data-val="1" onclick="selectDigit('divBGroup',this)">1자리</button>
+        <button class="digit-btn" data-val="2" onclick="selectDigit('divBGroup',this)">2자리</button>
+        <button class="digit-btn" data-val="3" onclick="selectDigit('divBGroup',this)">3자리</button>
+        <button class="digit-btn" data-val="4" onclick="selectDigit('divBGroup',this)">4자리</button>
+      </div>
+    </div>
+
+    <!-- 문항 수 -->
+    <div class="card" style="animation-delay:0.2s">
+      <div class="section-label">📝 문항 수</div>
+      <div class="num-grid" id="numGroup">
+        <button class="num-btn" data-val="10" onclick="selectNum(this)">10</button>
+        <button class="num-btn" data-val="20" onclick="selectNum(this)">20</button>
+        <button class="num-btn" data-val="25" onclick="selectNum(this)">25</button>
+        <button class="num-btn" data-val="50" onclick="selectNum(this)">50</button>
+        <button class="num-btn" data-val="100" onclick="selectNum(this)">100</button>
+      </div>
+    </div>
+
+    <button class="start-btn" onclick="startGame()">🚀 게임 시작!</button>
+  </div>
+
+  <!-- ============ GAME SCREEN ============ -->
+  <div id="gameScreen" class="hidden">
+
+    <!-- Progress + timer -->
+    <div class="card" style="padding:16px 18px;">
+      <div class="game-header">
+        <div class="progress-wrap">
+          <div class="progress-label" id="progressLabel">1 / 25</div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="timer-badge">⏱ <span id="timerDisplay">0</span>초</div>
+      </div>
+    </div>
+
+    <!-- Question -->
+    <div class="card">
+      <div class="q-number" id="qNumber">문제 1</div>
+      <div class="q-text" id="qText">?</div>
+
+      <div class="answer-area">
+        <div class="answer-input-wrap">
+          <span class="answer-label">🎯 정답</span>
+          <input type="number" class="answer-input" id="answerInput" placeholder="0" inputmode="numeric">
+        </div>
+        <div class="answer-input-wrap hidden" id="remainderWrap">
+          <span class="answer-label">💫 나머지</span>
+          <input type="number" class="answer-input" id="remainderInput" placeholder="0" inputmode="numeric">
+        </div>
+      </div>
+
+      <button class="submit-btn" onclick="submitAnswer()">✅ 제출하기</button>
+    </div>
+
+  </div>
+
+  <!-- ============ RESULT SCREEN ============ -->
+  <div id="resultScreen" class="hidden">
+
+    <!-- Score banner -->
+    <div class="score-banner" id="scoreBanner">
+      <span class="score-emoji" id="scoreEmoji">🌟</span>
+      <div class="score-main" id="scoreMain">0/0</div>
+      <div class="score-sub" id="scoreSub">잘했어요!</div>
+      <div class="score-badges">
+        <div class="score-badge" id="timeBadge">⏱ 0초</div>
+        <div class="score-badge" id="rateBadge">정답률 0%</div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="action-grid">
+      <button class="action-btn btn-save" onclick="downloadResult()">📸 결과 저장</button>
+      <button class="action-btn btn-replay" onclick="restartGame()">🔄 다시 풀기</button>
+    </div>
+
+    <!-- Wrong only toggle -->
+    <div style="margin-top:12px;">
+      <button class="history-toggle" id="wrongToggleBtn" onclick="toggleWrong()">❌ 틀린 문제만 보기</button>
+    </div>
+
+    <!-- All problems table -->
+    <div class="card" style="margin-top:12px;padding:16px 12px;">
+      <div class="section-label">📋 전체 결과</div>
+      <div class="result-table-wrap">
+        <table id="resultTable">
+          <thead>
+            <tr><th>문제</th><th>내 답</th><th>나머지</th><th>정답</th><th>결과</th></tr>
+          </thead>
+          <tbody id="resultBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- History toggle -->
+    <button class="history-toggle" style="margin-top:8px;" onclick="toggleHistory()">📊 히스토리 보기 / 숨기기</button>
+
+    <!-- History table -->
+    <div class="card hidden" id="historyWrap" style="padding:16px 12px;margin-top:10px;">
+      <div class="section-label">📊 나의 기록</div>
+      <div class="result-table-wrap">
+        <table class="history-table">
+          <thead>
+            <tr><th>날짜</th><th>회차</th><th>유형</th><th>점수</th><th>시간</th></tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+      <button onclick="clearHistory()" style="margin-top:10px;padding:8px 16px;background:#ff6b6b;color:#fff;border:none;border-radius:8px;font-family:'Jua',sans-serif;font-size:14px;cursor:pointer;width:100%;">🗑 히스토리 전체 삭제</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ===== INIT =====
+document.getElementById('gameDate').value = new Date().toISOString().split('T')[0];
+
+// ===== STATE =====
+let selectedOp = '', mul1 = 1, mul2 = 1, divA = 2, divB = 1, totalQ = 25;
+let problems = [], userAnswers = [], userRemainders = [];
+let currentIdx = 0, correctCount = 0, timerInterval, totalTime = 0, startTime;
+let showingWrongOnly = false;
+
+// ===== SETUP =====
+function selectOp(btn) {
+  selectedOp = btn.dataset.op;
+  document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const showMul = (selectedOp === '×' || selectedOp === 'mix');
+  const showDiv = (selectedOp === '÷' || selectedOp === 'mix');
+  document.getElementById('mulCard').classList.toggle('hidden', !showMul);
+  document.getElementById('divCard').classList.toggle('hidden', !showDiv);
+}
+
+function selectDigit(groupId, btn) {
+  document.getElementById(groupId).querySelectorAll('.digit-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const val = parseInt(btn.dataset.val);
+  if (groupId === 'mul1Group') mul1 = val;
+  else if (groupId === 'mul2Group') mul2 = val;
+  else if (groupId === 'divAGroup') divA = val;
+  else if (groupId === 'divBGroup') divB = val;
+}
+
+function selectNum(btn) {
+  document.querySelectorAll('.num-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  totalQ = parseInt(btn.dataset.val);
+}
+
+// ===== PROBLEM GENERATION =====
+function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function genMul() {
+  const a = randInt(Math.pow(10, mul1 - 1), Math.pow(10, mul1) - 1);
+  const b = randInt(Math.pow(10, mul2 - 1), Math.pow(10, mul2) - 1);
+  return { op: '×', question: `${a} × ${b}`, answer: a * b, remainder: null };
+}
+
+function genDiv() {
+  const aMin = Math.pow(10, divA - 1), aMax = Math.pow(10, divA) - 1;
+  const bMin = Math.pow(10, divB - 1), bMax = Math.pow(10, divB) - 1;
+  const b = randInt(Math.max(1, bMin), bMax);
+  const a = randInt(Math.max(b, aMin), aMax);
+  const ans = Math.floor(a / b);
+  const rem = a % b;
+  return { op: '÷', question: `${a} ÷ ${b}`, answer: ans, remainder: rem };
+}
+
+function genProblem() {
+  if (selectedOp === '×') return genMul();
+  if (selectedOp === '÷') return genDiv();
+  return Math.random() < 0.5 ? genMul() : genDiv();
+}
+
+// ===== START GAME =====
+function startGame() {
+  if (!selectedOp) { alert('연산을 선택해주세요! 😊'); return; }
+  if (!totalQ) { alert('문항 수를 선택해주세요! 😊'); return; }
+
+  // Default digit selections if none chosen
+  if ((selectedOp === '×' || selectedOp === 'mix') && mul1 === 1 && !document.querySelector('#mul1Group .selected')) mul1 = 1;
+  if ((selectedOp === '÷' || selectedOp === 'mix') && divA === 2 && !document.querySelector('#divAGroup .selected')) divA = 2;
+
+  problems = []; userAnswers = []; userRemainders = [];
+  currentIdx = 0; correctCount = 0; totalTime = 0; showingWrongOnly = false;
+
+  for (let i = 0; i < totalQ; i++) problems.push(genProblem());
+
+  document.getElementById('setupScreen').classList.add('hidden');
+  document.getElementById('gameScreen').classList.remove('hidden');
+
+  startTime = Date.now();
+  timerInterval = setInterval(() => {
+    totalTime = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById('timerDisplay').textContent = totalTime;
+  }, 1000);
+
+  showProblem();
+}
+
+// ===== SHOW PROBLEM =====
+function showProblem() {
+  const p = problems[currentIdx];
+  const num = currentIdx + 1;
+
+  document.getElementById('qNumber').textContent = `📌 문제 ${num}`;
+  document.getElementById('qText').textContent = p.question;
+  document.getElementById('progressLabel').textContent = `${num} / ${totalQ}`;
+  document.getElementById('progressFill').style.width = `${(currentIdx / totalQ) * 100}%`;
+
+  document.getElementById('answerInput').value = '';
+  document.getElementById('remainderInput').value = '';
+  document.getElementById('answerInput').focus();
+
+  if (p.op === '÷') {
+    document.getElementById('remainderWrap').classList.remove('hidden');
+  } else {
+    document.getElementById('remainderWrap').classList.add('hidden');
+  }
+}
+
+// ===== SUBMIT =====
+function submitAnswer() {
+  const ansVal = document.getElementById('answerInput').value;
+  const remVal = document.getElementById('remainderInput').value;
+  if (ansVal === '') { document.getElementById('answerInput').focus(); return; }
+
+  const ans = parseInt(ansVal);
+  const rem = remVal !== '' ? parseInt(remVal) : null;
+  const p = problems[currentIdx];
+
+  let correct = false;
+  if (p.op === '×') {
+    correct = ans === p.answer;
+  } else {
+    const remOk = rem === p.remainder || (rem === null && p.remainder === 0) || (rem === 0 && p.remainder === 0);
+    correct = ans === p.answer && remOk;
+  }
+
+  if (correct) correctCount++;
+  userAnswers.push(ans);
+  userRemainders.push(rem);
+
+  // Flash
+  const qt = document.getElementById('qText');
+  qt.classList.remove('correct-flash', 'wrong-flash');
+  void qt.offsetWidth;
+  qt.classList.add(correct ? 'correct-flash' : 'wrong-flash');
+
+  currentIdx++;
+  if (currentIdx < totalQ) {
+    setTimeout(showProblem, 200);
+  } else {
+    setTimeout(endGame, 250);
+  }
+}
+
+// Enter key submit
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !document.getElementById('gameScreen').classList.contains('hidden')) submitAnswer();
+});
+
+// ===== END GAME =====
+function endGame() {
+  clearInterval(timerInterval);
+  document.getElementById('gameScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+
+  const rate = Math.round(correctCount / totalQ * 100);
+  let emoji = rate === 100 ? '🏆' : rate >= 80 ? '🌟' : rate >= 60 ? '😊' : rate >= 40 ? '💪' : '😅';
+  let msg = rate === 100 ? '완벽해요! 최고!' : rate >= 80 ? '정말 잘했어요!' : rate >= 60 ? '잘 하고 있어요!' : rate >= 40 ? '더 열심히 해봐요!' : '다시 한 번 도전!';
+
+  document.getElementById('scoreEmoji').textContent = emoji;
+  document.getElementById('scoreMain').textContent = `${correctCount} / ${totalQ}`;
+  document.getElementById('scoreSub').textContent = msg;
+  document.getElementById('timeBadge').textContent = `⏱ ${totalTime}초`;
+  document.getElementById('rateBadge').textContent = `정답률 ${rate}%`;
+
+  // Result table
+  const tbody = document.getElementById('resultBody');
+  tbody.innerHTML = '';
+  problems.forEach((p, i) => {
+    const uAns = userAnswers[i];
+    const uRem = userRemainders[i];
+    let correct = false;
+    if (p.op === '×') correct = uAns === p.answer;
+    else {
+      const remOk = uRem === p.remainder || (uRem === null && p.remainder === 0) || (uRem === 0 && p.remainder === 0);
+      correct = uAns === p.answer && remOk;
+    }
+    const correctAns = p.op === '÷' ? `${p.answer}${p.remainder > 0 ? ' 나머지' + p.remainder : ''}` : p.answer;
+    const dispRem = p.op === '÷' ? (uRem !== null ? uRem : '-') : '-';
+    const tr = document.createElement('tr');
+    tr.dataset.correct = correct ? 'true' : 'false';
+    tr.innerHTML = `<td>${p.question}</td><td>${uAns}</td><td>${dispRem}</td><td>${correctAns}</td>
+      <td><span class="${correct ? 'tag-correct' : 'tag-wrong'}">${correct ? '✓' : '✗'}</span></td>`;
+    tbody.appendChild(tr);
+  });
+
+  // Save history
+  const history = JSON.parse(localStorage.getItem('yoojuHistory') || '[]');
+  const dateVal = document.getElementById('gameDate').value;
+  const todayCount = history.filter(h => h.date === dateVal).length + 1;
+  const opLabel = selectedOp === '×' ? '곱셈' : selectedOp === '÷' ? '나눗셈' : '혼합';
+  history.push({ date: dateVal, round: todayCount, type: opLabel, score: rate, correct: correctCount, total: totalQ, time: totalTime });
+  localStorage.setItem('yoojuHistory', JSON.stringify(history));
+
+  renderHistory();
+}
+
+// ===== WRONG ONLY TOGGLE =====
+function toggleWrong() {
+  showingWrongOnly = !showingWrongOnly;
+  document.querySelectorAll('#resultBody tr').forEach(tr => {
+    if (showingWrongOnly && tr.dataset.correct === 'true') tr.style.display = 'none';
+    else tr.style.display = '';
+  });
+  document.getElementById('wrongToggleBtn').textContent = showingWrongOnly ? '📋 전체 문제 보기' : '❌ 틀린 문제만 보기';
+}
+
+// ===== HISTORY =====
+function renderHistory() {
+  const history = JSON.parse(localStorage.getItem('yoojuHistory') || '[]');
+  const tbody = document.getElementById('historyBody');
+  tbody.innerHTML = '';
+  [...history].sort((a, b) => b.date.localeCompare(a.date) || b.round - a.round).forEach(h => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${h.date}</td><td>${h.round}회차</td><td>${h.type}</td>
+      <td style="color:${h.score>=80?'#2db88c':h.score>=60?'#f5a623':'#e04040'};font-weight:bold;">${h.score}%</td>
+      <td>${h.time}초</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function toggleHistory() {
+  const wrap = document.getElementById('historyWrap');
+  wrap.classList.toggle('hidden');
+  if (!wrap.classList.contains('hidden')) renderHistory();
+}
+
+function clearHistory() {
+  if (confirm('히스토리를 전부 지울까요?')) {
+    localStorage.removeItem('yoojuHistory');
+    renderHistory();
+  }
+}
+
+// ===== DOWNLOAD =====
+function downloadResult() {
+  const el = document.getElementById('scoreBanner');
+  html2canvas(document.getElementById('resultScreen'), { scrollY: -window.scrollY, backgroundColor: '#EAF6FF' }).then(canvas => {
+    const link = document.createElement('a');
+    const dateVal = document.getElementById('gameDate').value;
+    link.download = `유주수학_${dateVal}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+}
+
+// ===== RESTART =====
+function restartGame() {
+  document.getElementById('resultScreen').classList.add('hidden');
+  document.getElementById('setupScreen').classList.remove('hidden');
+  document.getElementById('historyWrap').classList.add('hidden');
+}
+</script>
+</body>
+</html>
